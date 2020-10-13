@@ -12,24 +12,18 @@ exports.Index = async function(request, response) {
     }
 };
 
-exports.getOrderByTable = async function(request, response) {
-    let tableNum = request.params.tableNum;
-    let responseObj = await _orderRepo.getOrderByTableNum(tableNum);
-    if(responseObj.unCompletedOrders != null) {
-        response.json({ unCompletedOrders: responseObj.unCompletedOrders, 
-                        errorMessage: ''})
-    }
-    else {
-        response.json({ unCompletedOrders:[],
-                        errorMessage: responseObj.errorMessage})
-    }
-
-}
-
 
 exports.CreateOrder = async function(request, response) {
     let _dateTime = new Date();
-    let orderDate = _dateTime.getMonth() + 1  + "/" + _dateTime.getDate() + "/" + _dateTime.getFullYear();
+    let _month = _dateTime.getMonth() + 1;;
+    let _day = _dateTime.getDate();
+    if(_dateTime.getMonth() < 9) {
+        _month = '0' + _month;
+    }
+    if(_dateTime.getDate() < 10) {
+        _day = '0' + _day;
+    }
+    let orderDate = _dateTime.getFullYear() + "-" + _month +"-" + _day;
     let orderTime = _dateTime.toString();
     let tempOrderObj = new Order({
         'orderDate':    orderDate,
@@ -50,3 +44,57 @@ exports.CreateOrder = async function(request, response) {
                         errorMessage: responseObj.errorMessage});
     }
 };
+
+exports.getOrdersByFilter = async function(request, response) {
+    let tableNum = request.body.tableNum;
+    let orderDate = request.body.orderDate;
+    let isCompleted = request.body.isCompleted;
+    let responseObj = await _orderRepo.getOrdersByFilter(tableNum, orderDate, isCompleted);
+    if(responseObj.selectedOrders != null) {
+        response.json({ selectedOrders: responseObj.selectedOrders, 
+                        errorMessage: ''})
+    }
+    else {
+        response.json({ selectedOrders:[],
+                        errorMessage: responseObj.errorMessage})
+    }
+};
+
+exports.getOrderByTable = async function(request, response) {
+    let tableNum = request.params.tableNum;
+    let responseObj = await _orderRepo.getOrderByTableNum(tableNum);
+    if(responseObj.unCompletedOrders != null) {
+        response.json({ unCompletedOrders: responseObj.unCompletedOrders, 
+                        errorMessage: ''})
+    }
+    else {
+        response.json({ unCompletedOrders:[],
+                        errorMessage: responseObj.errorMessage})
+    }
+};
+
+exports.complete = async function(request, response) {
+    let filter = {
+        _id: request.body._id,
+    }
+
+    let updating = {
+        isCompleted: true
+    };
+
+    let updatedOrder = await _orderRepo.update(filter, updating);
+    response.json({ errorMessage: "" });
+};
+
+// exports.edit = async function(request, response) {
+//     let filter = {
+//         _id: request.body._id,
+//     }
+
+//     let updating = {
+//         orderItems: request.body.orderItems,
+//     };
+
+//     let updatedOrder = await _orderRepo.update(filter, updating);
+//     response.json({ errorMessage: "" });
+// };

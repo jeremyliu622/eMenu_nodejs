@@ -1,6 +1,8 @@
 // Create pooled data connection.
 var mongoose = require('mongoose');
-const DB_URI = 'mongodb://localhost:27017/MenuDB';
+// const DB_URI = 'mongodb://localhost:27017/MenuDB';
+const DB_URI      = "mongodb+srv://dbUser:P@ssw0rd@cluster0-tycp2.mongodb.net/eMenu?retryWrites=true&w=majority"
+
 let options = { useNewUrlParser: true , useUnifiedTopology: true };
 mongoose.connect(DB_URI, options);
 

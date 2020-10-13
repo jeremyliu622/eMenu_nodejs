@@ -13,6 +13,10 @@ module.exports = function(app){
     app.post('/submitOrder/:tableNum', cors(), OrderController.CreateOrder);
     app.get('/allOrders', cors(), OrderController.Index);
     app.get('/order/:tableNum', cors(), OrderController.getOrderByTable);
+    app.post('/selectedOrders', cors(), OrderController.getOrdersByFilter);
+    app.post('/completeOrder', cors(), OrderController.complete);
+
+
 
 
 
